@@ -3,11 +3,11 @@ Bienvenido al repositorio del plugin de bingmap para Xamarin Forms, actualmente 
 
 Caracteristica | Android | iOS | UWP
 --- | --- | --- | --- 
-MapRenderer | `:heavy_check_mark:` | `:x:` | `:x:`
-Map Theme | `:heavy_check_mark:` | `:x:` | `:x:`
-Pin Collection | `:heavy_check_mark:` | `:x:` | `:x:`
-Pin Clicked | `:heavy_check_mark:` | `:x:` | `:x:`
-Pin Bounds | `:heavy_check_mark:` | `:x:` | `:x:`
-Set Center of Map | `:heavy_check_mark:` | `:x:` | `:x:`
-Polyline Collection | `:heavy_check_mark:` | `:x:` | `:x:`
-ViewChanged | `:heavy_check_mark:` | `:x:` | `:x:`
+MapRenderer | :heavy_check_mark: | :x: | :x:
+Map Theme | :heavy_check_mark: | :x: | :x:
+Pin Collection | :heavy_check_mark: | :x: | :x:
+Pin Clicked | :heavy_check_mark: | :x: | :x:
+Pin Bounds | :heavy_check_mark: | :x: | :x:
+Set Center of Map | :heavy_check_mark: | :x: | :x:
+Polyline Collection | :heavy_check_mark: | :x: | :x:
+ViewChanged | :heavy_check_mark: | :x: | :x:
