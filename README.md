@@ -1,0 +1,2 @@
+### Plugin.BingMap
+Bienvenido al repositorio del plugin de bingmap para Xamarin Forms, actualmente estoy trabajando en este plugin, espero que si usted quiere apoyarme a codear las caracteristicas para UWP o iOS, seria genial! Igual puede mandarme mensaje para explicarle como es que esta desarrollado este plugin, usando un puente entre la Web y C#.
