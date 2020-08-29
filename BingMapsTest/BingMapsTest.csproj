@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\icon.png" />
+    <None Remove="Resources\Strings\Common.json" />
+    <None Remove="Resources\Strings\Main.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Icon.png" />
+    <EmbeddedResource Include="Resources\Strings\Common.json" />
+    <EmbeddedResource Include="Resources\Strings\Main.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.442" />
+    <PackageReference Include="ApiWrapper" Version="1.0.9" />
+    <PackageReference Include="Com.Airbnb.Xamarin.Forms.Lottie" Version="3.1.2" />
+    <PackageReference Include="LightForms" Version="2.4.0" />
+    <PackageReference Include="LightForms.Skeleton" Version="1.0.0" />
+    <PackageReference Include="LightForms.Sqlite" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AppCenter" Version="3.2.2" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="3.2.2" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="3.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Plugin.UI.Xaml" Version="1.2.8" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.2" />
+    <PackageReference Include="Sharpnado.MaterialFrame" Version="1.1.0" />
+    <PackageReference Include="Sharpnado.Presentation.Forms" Version="1.6.0" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
+    <PackageReference Include="Xam.Plugin.Media" Version="5.0.1" />
+    <PackageReference Include="Xamarin.FFImageLoading" Version="2.4.11.982" />
+    <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
+    <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.4.11.982" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.847" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
+    <PackageReference Include="Xamarin.Forms.Visual.Material" Version="4.6.0.847" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BingMap\BingMap.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Themes\Common.xaml.cs">
+      <DependentUpon>Common.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

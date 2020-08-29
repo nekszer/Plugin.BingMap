@@ -1,0 +1,1 @@
+﻿La imagen que se agregue a esta carpeta debe tener la accion de compilacion como recurso incrustado en las propiedades del archivo

@@ -1,0 +1,22 @@
+﻿{
+  "Bienvenido a LightForms {0}": {
+    "es": "Bienvenido a LightForms {0}",
+    "en": "Welcome to LightForms {0}"
+  },
+  "AppName": {
+    "es": "Español",
+    "en": "English"
+  },
+  "Aceptar": {
+    "es": "Aceptar",
+    "en": "Accept"
+  },
+  "Cancelar": {
+    "es": "Cancelar",
+    "en": "Cancel"
+  },
+  "Información": {
+    "es": "Información",
+    "en": "Information"
+  }
+}

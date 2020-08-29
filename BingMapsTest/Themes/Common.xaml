@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="BingMapsTest.Themes.Common">
+    <Color x:Key="Accent">#338BD8</Color>
+    <Color x:Key="Background">#f1f1f1</Color>
+    <Color x:Key="Content">White</Color>
+    <Color x:Key="Foreground">Black</Color>
+</ResourceDictionary>
