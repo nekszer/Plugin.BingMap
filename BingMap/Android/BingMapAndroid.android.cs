@@ -91,17 +91,10 @@ namespace Plugin.BingMap
                             }
                             break;
 
-                        case Plugin.BingMap.Action.ZoomForAllPins:
-                            if (e is null)
-                            {
-                                Control.EvaluateJavascript("zoomForAllPins()", null);
-                            }
-                            break;
-
                         case Plugin.BingMap.Action.Polyline:
                             if(e is Polyline polyline)
                             {
-                                Control.EvaluateJavascript($"addPolyline({JsonConvert.SerializeObject(polyline)})", null);
+                                Control.EvaluateJavascript($"addPolyline({JsonConvert.SerializeObject(polyline)}, {polyline.GetHashCode()})", null);
                             }
                             break;
 
@@ -109,6 +102,14 @@ namespace Plugin.BingMap
                             if(e is null)
                             {
                                 Control.EvaluateJavascript($"removeAllPolylines()", null);
+                            }
+                            break;
+
+                        case Plugin.BingMap.Action.ZoomForLocations:
+                            if(e is IEnumerable<Location> locations)
+                            {
+                                var json = JsonConvert.SerializeObject(locations);
+                                Control.EvaluateJavascript($"zoomForLocations({json})", null);
                             }
                             break;
 
@@ -159,6 +160,8 @@ namespace Plugin.BingMap
 
                             function onViewChange(event, lat, lng) { jsBridge.onViewChange(event, lat, lng); }
 
+                            function invokePolylineClick(hashcode) { jsBridge.polylineClick(hashcode); }
+
                             function loadMapScenario() {
                                 // iniciamos el mapa
                                 map = new Microsoft.Maps.Map(document.getElementById('bingv8map'), {
@@ -203,9 +206,6 @@ namespace Plugin.BingMap
                             function addPinImage(hashcode, lat, lon, title, data, source, x, y) {
                                 // si el mapa no se ha cargado, regresamos
                                 if (map == undefined) return;
-
-                                locations.push(new Microsoft.Maps.Location(lat, lon));
-
                                 var pin = {
                                     latitude: parseFloat(lat),
                                     longitude: parseFloat(lon),
@@ -244,9 +244,6 @@ namespace Plugin.BingMap
                             function addPin(hashcode, lat, lon, title, data) {
                                 // si el mapa no se ha cargado, regresamos
                                 if (map == undefined) return;
-
-                                locations.push(new Microsoft.Maps.Location(lat, lon));
-
                                 var pin =
                                     {
                                         latitude: parseFloat(lat),
@@ -288,27 +285,34 @@ namespace Plugin.BingMap
                                         map.entities.removeAt(i);
                                     }
                                 }
-                                locations = [];
                             };
 
-                            function zoomForAllPins() {
+                            function addPolyline(polyline, hashcode){
+                                var polylinelocations = polyline.Locations;
+                                var maplocations = [];
+                                for (let index = 0; index < polylinelocations.length; index++) {
+                                    const location = polylinelocations[index];
+                                    maplocations.push(new Microsoft.Maps.Location(location.Latitude, location.Longitude));
+                                }
+                                var polyline = new Microsoft.Maps.Polyline(maplocations, polyline.Style);
+                                polyline.metadata = hashcode;
+                                Microsoft.Maps.Events.addHandler(polyline, 'click', function (args) {
+                                    invokePolylineClick(args.target.metadata);
+                                });
+                                map.entities.push(polyline);
+                            }
+
+                            function zoomForLocations(latlngarray) {
                                 if (map != undefined) {
+                                    for (let index = 0; index < latlngarray.length; index++) {
+                                        const location = latlngarray[index];
+                                        locations.push(new Microsoft.Maps.Location(location.Latitude, location.Longitude));
+                                    }
                                     if (locations.length > 0) {
                                         var bestview = Microsoft.Maps.LocationRect.fromLocations(locations);
                                         map.setView({ bounds: bestview });
                                     }
                                 }
-                            }
-
-                            function addPolyline(polyline){
-                                var locations = polyline.Locations;
-                                var maplocations = [];
-                                for (let index = 0; index < locations.length; index++) {
-                                    const location = locations[index];
-                                    maplocations.push(new Microsoft.Maps.Location(location.Latitude, location.Longitude));
-                                }
-                                var polyline = new Microsoft.Maps.Polyline(maplocations, polyline.Style);
-                                map.entities.push(polyline);
                             }
 
                             function removeAllPolylines(){

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 
@@ -11,19 +12,20 @@ namespace Plugin.BingMap
     /// </summary>
     public class Map : View
     {
+
         /// <summary>
         /// Lista de pins
         /// </summary>
-        public ObservableCollection<Pin> Pins { get; private set; }
+        public ObservableCollection<Pin> Pins { get; internal set; }
 
-        public ObservableCollection<Polyline> Polylines { get; private set; }
+        public ObservableCollection<Polyline> Polylines { get; internal set; }
 
         public MapTheme Theme { get; set; }
 
         /// <summary>
         /// Indica si el mapa se cargo o no
         /// </summary>
-        public bool HasBeenLoaded { get; private set; }
+        public bool HasBeenLoaded { get; internal set; }
 
         /// <summary>
         /// Realiza una instsancia del mapa
@@ -55,19 +57,16 @@ namespace Plugin.BingMap
         /// </summary>
         public event EventHandler<ViewChanged> ViewChanged;
 
+        public void SetBounds(IEnumerable<Location> locations)
+        {
+            Action = Action.ZoomForLocations;
+            ReceiveAction?.Invoke(this, locations);
+        }
+
         /// <summary>
         /// Este evento se ejecuta cuando el usuario hace un clic sobre el mapa, devolviendo la posicion gps del clic
         /// </summary>
         public event EventHandler<Location> MapClicked;
-
-        /// <summary>
-        /// Este metodo permite hacer un escalado en el mapa que muestra todos los pins
-        /// </summary>
-        public void ZoomForAllPins()
-        {
-            Action = Action.ZoomForAllPins;
-            ReceiveAction?.Invoke(this, null);
-        }
 
         /// <summary>
         /// Asigna la ApiKey del mapa

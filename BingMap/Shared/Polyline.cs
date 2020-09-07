@@ -6,6 +6,8 @@ namespace Plugin.BingMap
 {
     public class Polyline
     {
+        public string Data { get; set; }
+
         private PolylineStyle style;
         public PolylineStyle Style
         {
@@ -26,6 +28,14 @@ namespace Plugin.BingMap
             }
         }
         public IEnumerable<Location> Locations { get; set; }
+        public int HashCode { get; set; }
+
+        public event EventHandler Click;
+
+        internal void OnClick()
+        {
+            Click?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public class PolylineStyle

@@ -18,7 +18,7 @@
              xmlns:BingMap="clr-namespace:Plugin.BingMap;assembly=Plugin.BingMap">
 
     <Grid>
-        <BingMap:Map ApiKey="ArBtbiMaMJAPdvWz_CJU6VKVncwETqM6V-xrp_YihqqPm6Wc8vgGeiyOOJ2yxd3i" 
+        <BingMap:Map x:Name="Map" ApiKey="ArBtbiMaMJAPdvWz_CJU6VKVncwETqM6V-xrp_YihqqPm6Wc8vgGeiyOOJ2yxd3i" 
                      MapClicked="Map_MapClicked" ViewChanged="Map_ViewChanged" Theme="Dark" />
     </Grid>
 

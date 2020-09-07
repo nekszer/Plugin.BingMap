@@ -5,8 +5,8 @@
         SetCenter,
         AddPin,
         RemoveAllPins,
-        ZoomForAllPins,
         Polyline,
-        RemoveAllPolylines
+        RemoveAllPolylines,
+        ZoomForLocations
     }
 }

@@ -157,6 +157,11 @@ descripcion sin acentos</Description>
 
   <ItemGroup>
     <Compile Include="Shared\Polyline.cs" />
+    <Compile Include="Shared\Routes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shared\Routes.cs" />
   </ItemGroup>
 
   <!--Additional item groups-->

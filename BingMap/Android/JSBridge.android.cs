@@ -15,6 +15,27 @@ namespace Plugin.BingMap
         }
 
         [JavascriptInterface]
+        [Export("polylineClick")]
+        public void PolylineClick(string hashcode)
+        {
+            if (_bingmap != null && _bingmap.TryGetTarget(out BingMapAndroid bingmap))
+            {
+                bingmap.Post(() =>
+                {
+                    if (int.TryParse(hashcode, out int hash))
+                    {
+                        var polylineitem = bingmap.Element.Polylines.FirstOrDefault(e => e.GetHashCode() == hash);
+                        if (polylineitem != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("PolylineClick", "BingMap");
+                            polylineitem.OnClick();
+                        }
+                    }
+                });
+            }
+        }
+
+        [JavascriptInterface]
         [Export("onViewChange")]
         public void OnViewChange(string e, string lat, string lng)
         {

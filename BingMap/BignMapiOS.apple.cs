@@ -255,13 +255,6 @@ namespace Plugin.BingMap
                             }
                             break;
 
-                        case Action.ZoomForAllPins:
-                            if (e is null)
-                            {
-                                var r = await Control.EvaluateJavaScriptAsync("zoomForAllPins()");
-                            }
-                            break;
-
                         default:
                             break;
                     }
