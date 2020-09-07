@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
   <PropertyGroup>
     <!--Work around so the conditions work below-->
@@ -14,10 +14,10 @@
     <PackageId>Plugin.BingMap</PackageId>
     
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
-    <Version>1.1.0.0</Version>
-    <PackageVersion>1.0.0.0</PackageVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.2.0.0</AssemblyFileVersion>
+    <Version>1.2.0</Version>
+    <PackageVersion>1.2.0.0</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>default</LangVersion>
@@ -31,10 +31,10 @@
     
     <!--TODO: Fill these in-->
     <PackageLicenseUrl></PackageLicenseUrl>
-    <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
+    <PackageProjectUrl>https://github.com/nekszer/Plugin.BingMap</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nekszer/Plugin.BingMap</RepositoryUrl>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageIconUrl>ICON URL</PackageIconUrl>
+    <PackageIconUrl></PackageIconUrl>
     <PackageTags>xamarin, windows, ios, android, xamarin.forms, plugin, BingMap</PackageTags>
     
     <Title>BingMap Plugin for Xamarin and Windows</Title>
@@ -62,7 +62,9 @@ descripcion sin acentos</Description>
 
     <!--When built in 2019 will remove extra references on pack-->
     <DisableExtraReferences>true</DisableExtraReferences>
-    <FileVersion>1.1.0.0</FileVersion>
+    <FileVersion>1.2.0.0</FileVersion>
+    <PackageIcon>bingmap.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
     
   </PropertyGroup>
 
@@ -102,6 +104,10 @@ descripcion sin acentos</Description>
 
   <ItemGroup>
     <None Remove="BingMapView.shared.cs" />
+    <None Include="C:\Users\NEKSZ\Desktop\bingmap.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
