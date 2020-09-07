@@ -14,10 +14,10 @@
     <PackageId>Plugin.BingMap</PackageId>
     
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <AssemblyFileVersion>1.2.0.0</AssemblyFileVersion>
-    <Version>1.2.0</Version>
-    <PackageVersion>1.2.0.0</PackageVersion>
+    <AssemblyVersion>1.2.1.0</AssemblyVersion>
+    <AssemblyFileVersion>1.2.1.0</AssemblyFileVersion>
+    <Version>1.2.1</Version>
+    <PackageVersion>1.2.1.0</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>default</LangVersion>
@@ -44,6 +44,8 @@ Se ha agregado
 MapClicked - Event
 ViewChanged - Event
 Polylines - Collection
+Routes
+• Calculate Route
 
 Nota: 
 Este plugin solo funciona en Android por el momento, falta la implementacion de iOS, ademas este paquete sigue en desarrollo y podria tener errores.
@@ -62,7 +64,7 @@ descripcion sin acentos</Description>
 
     <!--When built in 2019 will remove extra references on pack-->
     <DisableExtraReferences>true</DisableExtraReferences>
-    <FileVersion>1.2.0.0</FileVersion>
+    <FileVersion>1.2.1.0</FileVersion>
     <PackageIcon>bingmap.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     
