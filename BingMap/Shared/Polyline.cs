@@ -28,7 +28,6 @@ namespace Plugin.BingMap
             }
         }
         public IEnumerable<Location> Locations { get; set; }
-        public int HashCode { get; set; }
 
         public event EventHandler Click;
 

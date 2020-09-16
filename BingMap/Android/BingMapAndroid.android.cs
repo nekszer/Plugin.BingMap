@@ -1,7 +1,9 @@
 ﻿using Android.Content;
+using Android.Net.Http;
+using Android.Runtime;
+using Android.Webkit;
 using Newtonsoft.Json;
 using Plugin.BingMap;
-using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android.AppCompat;
@@ -11,11 +13,6 @@ namespace Plugin.BingMap
 {
     public class BingMapAndroid : ViewRenderer<Map, Android.Webkit.WebView>
     {
-        const string PinClick = "function invokePinClick(str){jsBridge.pinClick(str);}";
-        const string OnLoadComplete = "function invokeOnLoadComplete(str){jsBridge.onLoadComplete(str);}";
-        const string OnMapClick = "function onMapClick(lat, lng) { jsBridge.onMapClick(lat, lng); }";
-        const string OnViewChange = "function onViewChange(event, lat, lng) { jsBridge.onViewChange(event, lat, lng); }";
-
         Context _context;
 
         public BingMapAndroid(Context context) : base(context)
@@ -36,6 +33,9 @@ namespace Plugin.BingMap
                 webView.Settings.SetGeolocationEnabled(true);
                 webView.Settings.AllowContentAccess = true;
                 webView.Settings.JavaScriptEnabled = true;
+                webView.Settings.CacheMode = CacheModes.CacheElseNetwork;
+                webView.Settings.SetAppCacheEnabled(true);
+                webView.Settings.SetRenderPriority(WebSettings.RenderPriority.High);
                 SetNativeControl(webView);
             }
 
@@ -44,15 +44,10 @@ namespace Plugin.BingMap
                 var html = GetHtml(e.NewElement.ApiKey, e.NewElement.Theme, e.NewElement.Style);
                 Control.AddJavascriptInterface(new JSBridge(this), "jsBridge");
                 Control.LoadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
-                // InjectJS(OnLoadComplete);
-                // InjectJS(PinClick);
-                // InjectJS(OnMapClick);
-                // InjectJS(OnViewChange);
             }
 
             if (Element != null)
                 Element.ReceiveAction += Element_Send;
-            
         }
 
         private void Element_Send(object sender, object e)
@@ -113,21 +108,17 @@ namespace Plugin.BingMap
                             }
                             break;
 
+                        case Action.Reload:
+                            if(e is null)
+                            {
+                                Control.Reload();
+                            }
+                            break;
+
                         default:
                             break;
                     }
                 }
-            }
-        }
-
-        void InjectJS(string script)
-        {
-            if (Control != null)
-            {
-                Control.Post(() =>
-                {
-                    Control.LoadUrl(string.Format("javascript: {0}", script));
-                });
             }
         }
 
@@ -219,18 +210,7 @@ namespace Plugin.BingMap
                                     title: title
                                 });
 
-                                pushpin.metadata = {
-                                    HashCode: hashcode,
-                                    Latitude: lat,
-                                    Longitude: lon,
-                                    Title: title,
-                                    Data: data,
-                                    Image: {
-                                        Source: source,
-                                        X: x,
-                                        Y: y
-                                    }
-                                };
+                                pushpin.metadata = hashcode;
 
                                 map.entities.push(pushpin);
 
@@ -245,12 +225,12 @@ namespace Plugin.BingMap
                                 // si el mapa no se ha cargado, regresamos
                                 if (map == undefined) return;
                                 var pin =
-                                    {
-                                        latitude: parseFloat(lat),
-                                        longitude: parseFloat(lon),
-                                        altitude: 0,
-                                        altitudeReference: -1
-                                    };
+                                {
+                                    latitude: parseFloat(lat),
+                                    longitude: parseFloat(lon),
+                                    altitude: 0,
+                                    altitudeReference: -1
+                                };
 
                                 var pushpin = new Microsoft.Maps.Pushpin(pin, {
                                     title: title
@@ -330,6 +310,44 @@ namespace Plugin.BingMap
                         <div id='bingv8map' style='width: 100vw; height: 100vh;'></div>
                     </body>
                     </html>";
+        }
+    }
+
+    public class WebClient : WebViewClient
+    {
+        System.Action ActionError;
+
+        public WebClient(System.Action error)
+        {
+            ActionError = error;
+        }
+
+        public override void OnReceivedError(Android.Webkit.WebView view, [GeneratedEnum] ClientError errorCode, string description, string failingUrl)
+        {
+            base.OnReceivedError(view, errorCode, description, failingUrl);
+            System.Diagnostics.Debug.WriteLine(description);
+            ActionError?.Invoke();
+        }
+
+        public override void OnReceivedError(Android.Webkit.WebView view, IWebResourceRequest request, WebResourceError error)
+        {
+            base.OnReceivedError(view, request, error);
+            System.Diagnostics.Debug.WriteLine(error);
+            ActionError?.Invoke();
+        }
+
+        public override void OnReceivedHttpError(Android.Webkit.WebView view, IWebResourceRequest request, WebResourceResponse errorResponse)
+        {
+            base.OnReceivedHttpError(view, request, errorResponse);
+            System.Diagnostics.Debug.WriteLine(errorResponse);
+            ActionError?.Invoke();
+        }
+
+        public override void OnReceivedSslError(Android.Webkit.WebView view, SslErrorHandler handler, SslError error)
+        {
+            base.OnReceivedSslError(view, handler, error);
+            System.Diagnostics.Debug.WriteLine(error);
+            ActionError?.Invoke();
         }
     }
 

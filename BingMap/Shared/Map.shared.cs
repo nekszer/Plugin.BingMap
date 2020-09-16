@@ -46,6 +46,15 @@ namespace Plugin.BingMap
                     AddPolyline(polyline);
         }
 
+        public void Reload()
+        {
+            Action = Action.Reload;
+            Pins.Clear();
+            Polylines.Clear();
+            HasBeenLoaded = false;
+            ReceiveAction?.Invoke(this, null);
+        }
+
         private void RemoveAllPolylines()
         {
             Action = Action.RemoveAllPolylines;

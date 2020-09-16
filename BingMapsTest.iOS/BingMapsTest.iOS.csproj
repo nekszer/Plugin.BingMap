@@ -149,11 +149,15 @@
       <Version>4.6.0.847</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\BingMapsTest\BingMapsTest.csproj">
-      <Project>{E89AFD0D-3A20-4401-9E7D-50BD163D19EC}</Project>
+      <Project>{c5bb6d46-382f-4822-8504-5b9e2ff0efb9}</Project>
       <Name>BingMapsTest</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BingMap\BingMap.csproj">
+      <Project>{d026e318-ff9c-4005-8118-97ae399514f9}</Project>
+      <Name>BingMap</Name>
+    </ProjectReference>
   </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

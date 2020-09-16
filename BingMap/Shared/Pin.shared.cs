@@ -55,11 +55,6 @@ namespace Plugin.BingMap
         public string Title { get; set; }
 
         /// <summary>
-        /// Se utiliza para saber si se asigno un evento al pin
-        /// </summary>
-        public int HashCode { get; set; }
-
-        /// <summary>
         /// Evento click
         /// </summary>
         public event EventHandler<string> Click;

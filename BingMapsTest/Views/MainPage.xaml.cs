@@ -1,5 +1,4 @@
 ﻿using Plugin.BingMap;
-using System.Collections.Generic;
 using System.ComponentModel;
 using Xamarin.Forms;
 
@@ -18,14 +17,18 @@ namespace BingMapsTest.Views
         private void Map_MapClicked(object sender, Location e)
         {
             var map = (sender as Map);
-            map.Polylines.Add(new Polyline
+            var pin = new Pin(e)
             {
-                Locations = new List<Location>
-                {
-                    new Location(e.Latitude, e.Longitude),
-                    new Location(e.Latitude + 0.5, e.Longitude + 0.5)
-                }
-            });
+                Title = "Hello " + e.Latitude + "," + e.Longitude,
+                Data = "Hello " + e.Latitude + "," + e.Longitude
+            };
+            pin.Click += Pin_Click;
+            map.Pins.Add(pin);
+        }
+
+        private void Pin_Click(object sender, string e)
+        {
+            System.Diagnostics.Debug.WriteLine(e);
         }
 
         private void Map_ViewChanged(object sender, ViewChanged e)

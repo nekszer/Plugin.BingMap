@@ -69,25 +69,11 @@ namespace Plugin.BingMap
             {
                 bingmap.Post(() =>
                 {
-                    Pin pin = null;
-                    // Tengo que lanzar lanzar el click del pin
-                    try
+                    var pininlist = bingmap.Element.Pins.FirstOrDefault(e => e.GetHashCode() == int.Parse(str));
+                    if (pininlist != null)
                     {
-                        pin = bingmap.Element.DeserializeObject<Pin>(str);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex.StackTrace, "BingMap");
-                    }
-
-                    if (pin != null)
-                    {
-                        var pininlist = bingmap.Element.Pins.FirstOrDefault(e => e.GetHashCode() == pin.HashCode);
-                        if (pininlist != null)
-                        {
-                            System.Diagnostics.Debug.WriteLine("PinClick", "BingMap");
-                            pininlist.OnClick();
-                        }
+                        System.Diagnostics.Debug.WriteLine("PinClick", "BingMap");
+                        pininlist.OnClick();
                     }
                 });
             }
