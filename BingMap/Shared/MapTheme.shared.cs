@@ -2,6 +2,6 @@
 {
     public enum MapTheme
     {
-        Default, Dark, Light, CustomTile, CustomStyleARGB
+        Default, Dark, Light, CustomTile, CustomStyle
     }
 }

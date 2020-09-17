@@ -260,7 +260,7 @@ namespace Plugin.BingMap
                         }
                     }";
 
-                case MapTheme.CustomStyleARGB:
+                case MapTheme.CustomStyle:
                     if (style == null) throw new NullReferenceException("Para usar un tema personalizaado debes asignar un stilo [Style]");
                     return @", customMapStyle: " + JsonConvert.SerializeObject(style);
             }

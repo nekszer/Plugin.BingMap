@@ -52,73 +52,73 @@ namespace Plugin.BingMap
 
         private void Element_Send(object sender, object e)
         {
-            if (Control != null)
+            if (Control == null)
+                return;
+
+            if (!(sender is Map view))
+                return;
+
+            switch (view.Action)
             {
-                if (sender is Map view)
-                {
-                    switch (view.Action)
+                case Plugin.BingMap.Action.SetCenter:
+                    if (e is Center center)
                     {
-                        case Plugin.BingMap.Action.SetCenter:
-                            if (e is Center center)
-                            {
-                                Control.EvaluateJavascript($"setCenter({center.Latitude},{center.Longitude},{center.Zoom})", null);
-                            }
-                            break;
-
-                        case Plugin.BingMap.Action.AddPin:
-                            if (e is Pin pin)
-                            {
-                                if (pin.Image != null)
-                                {
-                                    Control.EvaluateJavascript($"addPinImage({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}', '{pin.Image.Source}', {pin.Image.X}, {pin.Image.Y})", null);
-                                }
-                                else
-                                {
-                                    Control.EvaluateJavascript($"addPin({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}')", null);
-                                }
-                            }
-                            break;
-
-                        case Plugin.BingMap.Action.RemoveAllPins:
-                            if (e is null)
-                            {
-                                Control.EvaluateJavascript("removeAllPins()", null);
-                            }
-                            break;
-
-                        case Plugin.BingMap.Action.Polyline:
-                            if(e is Polyline polyline)
-                            {
-                                Control.EvaluateJavascript($"addPolyline({JsonConvert.SerializeObject(polyline)}, {polyline.GetHashCode()})", null);
-                            }
-                            break;
-
-                        case Plugin.BingMap.Action.RemoveAllPolylines:
-                            if(e is null)
-                            {
-                                Control.EvaluateJavascript($"removeAllPolylines()", null);
-                            }
-                            break;
-
-                        case Plugin.BingMap.Action.ZoomForLocations:
-                            if(e is IEnumerable<Location> locations)
-                            {
-                                var json = JsonConvert.SerializeObject(locations);
-                                Control.EvaluateJavascript($"zoomForLocations({json})", null);
-                            }
-                            break;
-
-                        case Action.Reload:
-                            if(e is null)
-                            {
-                                Control.Reload();
-                            }
-                            break;
-
-                        default:
-                            break;
+                        Control.EvaluateJavascript($"setCenter({center.Latitude},{center.Longitude},{center.Zoom})", null);
                     }
-                }
+                    break;
+
+                case Plugin.BingMap.Action.AddPin:
+                    if (e is Pin pin)
+                    {
+                        if (pin.Image != null)
+                        {
+                            Control.EvaluateJavascript($"addPinImage({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}', '{pin.Image.Source}', {pin.Image.X}, {pin.Image.Y})", null);
+                        }
+                        else
+                        {
+                            Control.EvaluateJavascript($"addPin({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}')", null);
+                        }
+                    }
+                    break;
+
+                case Plugin.BingMap.Action.RemoveAllPins:
+                    if (e is null)
+                    {
+                        Control.EvaluateJavascript("removeAllPins()", null);
+                    }
+                    break;
+
+                case Plugin.BingMap.Action.Polyline:
+                    if (e is Polyline polyline)
+                    {
+                        Control.EvaluateJavascript($"addPolyline({JsonConvert.SerializeObject(polyline)}, {polyline.GetHashCode()})", null);
+                    }
+                    break;
+
+                case Plugin.BingMap.Action.RemoveAllPolylines:
+                    if (e is null)
+                    {
+                        Control.EvaluateJavascript($"removeAllPolylines()", null);
+                    }
+                    break;
+
+                case Plugin.BingMap.Action.ZoomForLocations:
+                    if (e is IEnumerable<Location> locations)
+                    {
+                        var json = JsonConvert.SerializeObject(locations);
+                        Control.EvaluateJavascript($"zoomForLocations({json})", null);
+                    }
+                    break;
+
+                case Action.Reload:
+                    if (e is null)
+                    {
+                        Control.Reload();
+                    }
+                    break;
+
+                default:
+                    break;
             }
         }
 

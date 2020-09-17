@@ -12,7 +12,7 @@
     <AssemblyName>Plugin.BingMap</AssemblyName>
     <RootNamespace>Plugin.BingMap</RootNamespace>
     <PackageId>Plugin.BingMap</PackageId>
-    
+
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <AssemblyVersion>1.2.2.0</AssemblyVersion>
     <AssemblyFileVersion>1.2.2.0</AssemblyFileVersion>
@@ -22,13 +22,13 @@
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>default</LangVersion>
     <DefineConstants>$(DefineConstants);</DefineConstants>
-    
+
     <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 
     <LangVersion>latest</LangVersion>
-    <DebugType>portable</DebugType>
-    
+    <DebugType>full</DebugType>
+
     <!--TODO: Fill these in-->
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/nekszer/Plugin.BingMap</PackageProjectUrl>
@@ -36,28 +36,30 @@
     <PackageReleaseNotes></PackageReleaseNotes>
     <PackageIconUrl></PackageIconUrl>
     <PackageTags>xamarin, windows, ios, android, xamarin.forms, plugin, BingMap</PackageTags>
-    
+
     <Title>BingMap Plugin for Xamarin and Windows</Title>
     <Summary>Summary of nuget</Summary>
-    <Description>BingMap Plugin
-Se ha agregado
-MapClicked - Event
-ViewChanged - Event
-Polylines - Collection
-Routes
-• Calculate Route
+    <Description>
+      BingMap Plugin
+      Se ha agregado
+      MapClicked - Event
+      ViewChanged - Event
+      Polylines - Collection
+      Routes
+      • Calculate Route
 
-Nota: 
-Este plugin solo funciona en Android por el momento, falta la implementacion de iOS, ademas este paquete sigue en desarrollo y podria tener errores.
+      Nota:
+      Este plugin solo funciona en Android por el momento, falta la implementacion de iOS, ademas este paquete sigue en desarrollo y podria tener errores.
 
-Uso:
-xmlns:BingMap="clr-namespace:Plugin.BingMap;assembly=Plugin.BingMap"
+      Uso:
+      xmlns:BingMap="clr-namespace:Plugin.BingMap;assembly=Plugin.BingMap"
 
-&lt;BingMap:Map ApiKey="YourApiKeyOfBingMaps" /&gt;
+      &lt;BingMap:Map ApiKey="YourApiKeyOfBingMaps" /&gt;
 
-descripcion sin acentos</Description>
-    
-    
+      descripcion sin acentos
+    </Description>
+
+
     <Owners>YOU</Owners>
     <Authors>Daniel Lopez</Authors>
     <Copyright>Copyright 2020</Copyright>
@@ -67,9 +69,9 @@ descripcion sin acentos</Description>
     <FileVersion>1.2.1.0</FileVersion>
     <PackageIcon>bingmap.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
-    
-  </PropertyGroup>
 
+  </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugSymbols>true</DebugSymbols>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
@@ -134,10 +136,6 @@ descripcion sin acentos</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="iOS\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Shared\Location.shared.cs" />
   </ItemGroup>
 
@@ -158,12 +156,27 @@ descripcion sin acentos</Description>
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Shared\Behaviors\MapPinsBehavior.cs" />
+    <Compile Include="Shared\Behaviors\MapSetCenterBehavior.cs" />
+    <Compile Include="Shared\Behaviors\MapSetRouteBehavior.cs" />
     <Compile Include="Shared\Polyline.cs" />
     <Compile Include="Shared\Routes.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Shared\Routes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shared\Behaviors\MapSetRouteBehavior.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shared\Behaviors\MapSetCenterBehavior.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shared\Behaviors\MapPinsBehavior.cs" />
   </ItemGroup>
 
   <!--Additional item groups-->
