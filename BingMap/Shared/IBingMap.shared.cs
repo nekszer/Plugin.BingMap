@@ -7,5 +7,20 @@ namespace Plugin.BingMap
     public interface IBingMap
     {
         Task<RouteResponse> CalculateRoute(string apikey, IEnumerable<WayPoint> waypoints, DistanceUnit distanceUnit = DistanceUnit.Kilometer);
+
+        Task<IEnumerable<string>> FindAddressFromLocation(string apikey, Location location);
+
+        Task<IEnumerable<AddressLocation>> FindLocationByQuery(string apikey, string query, int maxresults);
+    }
+
+    public class AddressLocation
+    {
+        public string Name { get; set; }
+        public Location Location { get; set; }
+        public AddressLocation(string name, Location location)
+        {
+            Name = name;
+            Location = location;
+        }
     }
 }

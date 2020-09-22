@@ -11,5 +11,10 @@ namespace Plugin.BingMap
             Latitude = lat;
             Longitude = lng;
         }
+
+        public override string ToString()
+        {
+            return $"{Latitude},{Longitude}";
+        }
     }
 }

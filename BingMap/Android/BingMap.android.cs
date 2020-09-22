@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Plugin.BingMap.Shared;
 
 namespace Plugin.BingMap
@@ -13,7 +14,7 @@ namespace Plugin.BingMap
     public class BingMapImplementation : IBingMap
     {
         /// <summary>
-        /// 
+        /// Calcula la ruta de n puntos
         /// </summary>
         /// <param name="apikey"></param>
         /// <param name="waypoints"></param>
@@ -58,9 +59,85 @@ namespace Plugin.BingMap
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     return null;
                 var json = await response.Content.ReadAsStringAsync();
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<RouteResponse>(json);
+                var routeresponse = JsonConvert.DeserializeObject<RouteResponse>(json);
+                return routeresponse;
             }
             catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Devuelve las posibles direcciones de un punto en especifico
+        /// </summary>
+        /// <param name="apikey"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<string>> FindAddressFromLocation(string apikey, Location location)
+        {
+            var endpoint = $"https://dev.virtualearth.net/REST/v1/Locations/{location}?includeEntityTypes=Address&key={apikey}";
+            try
+            {
+                HttpClient client = new HttpClient();
+                var response = await client.GetAsync(endpoint);
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    return null;
+                var json = await response.Content.ReadAsStringAsync();
+                var findaddress = JsonConvert.DeserializeObject<FindAddressFromLocationResonse>(json);
+                if (findaddress.StatusCode != 200) return null;
+                if (findaddress.ResourceSets == null) return null;
+                var result = findaddress.ResourceSets.FirstOrDefault();
+                if (result == null) return null;
+                if (result.Resources == null || result.Resources.Count < 1) return null;
+                var list = new List<string>();
+                foreach (var resource in result.Resources)
+                    list.Add(resource.Name);
+                return list;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Devuelva las predicciones de ubicacion gps con base a un query
+        /// </summary>
+        /// <param name="apikey"></param>
+        /// <param name="query"></param>
+        /// <param name="maxresults"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<AddressLocation>> FindLocationByQuery(string apikey, string query, int maxresults = 5)
+        {
+            var endpoint = $"http://dev.virtualearth.net/REST/v1/Locations?query={query}&maxResults={maxresults}&key={apikey}";
+            try
+            {
+                HttpClient client = new HttpClient();
+                var response = await client.GetAsync(endpoint);
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    return null;
+                var json = await response.Content.ReadAsStringAsync();
+                var findaddress = JsonConvert.DeserializeObject<FindLocationByQueryResponse>(json);
+                if (findaddress.StatusCode != 200) return null;
+                if (findaddress.ResourceSets == null) return null;
+                var resourceset = findaddress.ResourceSets.FirstOrDefault();
+                if (resourceset == null) return null;
+                if (resourceset.Resources == null) return null;
+                var locations = new List<AddressLocation>();
+                foreach (var resource in resourceset.Resources)
+                {
+                    var coordinates = resource.Point?.Coordinates;
+                    if (coordinates == null) continue;
+                    var lat = coordinates[0];
+                    var lng = coordinates[0];
+                    locations.Add(new AddressLocation(resource.Name, new Location(lat, lng)));
+                }
+                return locations;
+            }
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
             }

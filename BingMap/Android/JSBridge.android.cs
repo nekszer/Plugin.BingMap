@@ -18,7 +18,9 @@ namespace Plugin.BingMap
         [Export("polylineClick")]
         public void PolylineClick(string hashcode)
         {
-            if (_bingmap != null && _bingmap.TryGetTarget(out BingMapAndroid bingmap))
+            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
+                return;
+            try
             {
                 bingmap.Post(() =>
                 {
@@ -33,18 +35,28 @@ namespace Plugin.BingMap
                     }
                 });
             }
+            catch(Exception ex)
+            {
+
+            }
         }
 
         [JavascriptInterface]
         [Export("onViewChange")]
         public void OnViewChange(string e, string lat, string lng)
         {
-            if (_bingmap != null && _bingmap.TryGetTarget(out BingMapAndroid bingmap))
+            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
+                return;
+            try
             {
                 bingmap.Post(() =>
                 {
                     bingmap.Element.OnViewChange(e, double.Parse(lat), double.Parse(lng));
                 });
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
@@ -52,12 +64,18 @@ namespace Plugin.BingMap
         [Export("onMapClick")]
         public void OnMapClick(string lat, string lng)
         {
-            if (_bingmap != null && _bingmap.TryGetTarget(out BingMapAndroid bingmap))
+            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
+                return;
+            try
             {
                 bingmap.Post(() =>
                 {
                     bingmap.Element.OnMapClicked(double.Parse(lat), double.Parse(lng));
                 });
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
 
@@ -65,7 +83,9 @@ namespace Plugin.BingMap
         [Export("pinClick")]
         public void PinClick(string str)
         {
-            if (_bingmap != null && _bingmap.TryGetTarget(out BingMapAndroid bingmap))
+            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
+                return;
+            try
             {
                 bingmap.Post(() =>
                 {
@@ -77,6 +97,10 @@ namespace Plugin.BingMap
                     }
                 });
             }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
         }
 
         [JavascriptInterface]
@@ -84,12 +108,18 @@ namespace Plugin.BingMap
         public void OnLoadComplete(string str)
         {
             System.Diagnostics.Debug.WriteLine("OnLoadComplete", "BingMap");
-            if (_bingmap != null && _bingmap.TryGetTarget(out BingMapAndroid bingmap))
+            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
+                return;
+            try
             {
                 bingmap.Post(() =>
                 {
                     bingmap.Element.OnLoadComplete(str);
                 });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
             }
         }
     }
