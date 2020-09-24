@@ -109,9 +109,13 @@ namespace Plugin.BingMap
         /// <param name="query"></param>
         /// <param name="maxresults"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AddressLocation>> FindLocationByQuery(string apikey, string query, int maxresults = 5)
+        public async Task<IEnumerable<AddressLocation>> FindLocationByQuery(string apikey, string query, int maxresults = 5, string twolettercountry = null, Location userlocation = null)
         {
             var endpoint = $"http://dev.virtualearth.net/REST/v1/Locations?query={query}&maxResults={maxresults}&key={apikey}";
+            if (string.IsNullOrEmpty(twolettercountry))
+                endpoint = $"{endpoint}&ur={twolettercountry}";
+            if (userlocation != null)
+                endpoint = $"{endpoint}&ul={userlocation}";
             try
             {
                 HttpClient client = new HttpClient();

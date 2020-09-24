@@ -10,7 +10,7 @@ namespace Plugin.BingMap
 
         Task<IEnumerable<string>> FindAddressFromLocation(string apikey, Location location);
 
-        Task<IEnumerable<AddressLocation>> FindLocationByQuery(string apikey, string query, int maxresults);
+        Task<IEnumerable<AddressLocation>> FindLocationByQuery(string apikey, string query, int maxresults = 5, string twolettercountry = null, Location userlocation = null);
     }
 
     public class AddressLocation
