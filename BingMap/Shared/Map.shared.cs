@@ -2,10 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace Plugin.BingMap
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum MapType
+    {
+        Road, StreetSide, Aerial, BirdsEye, CanvasDark, CanvasLight, Grayscale
+    }
 
     /// <summary>
     /// vista del mapa de bing
@@ -16,16 +24,50 @@ namespace Plugin.BingMap
         /// <summary>
         /// Lista de pins
         /// </summary>
-        public ObservableCollection<Pin> Pins { get; internal set; }
+        public ObservableCollection<Pin> Pins { get; set; }
 
-        public ObservableCollection<Polyline> Polylines { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ObservableCollection<Polyline> Polylines { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public MapTheme Theme { get; set; }
+
+        #region BindableProperty MapType
+        /// <summary>
+        /// Description of property
+        /// </summary>
+        public static readonly BindableProperty MapTypeProperty = BindableProperty.Create(nameof(MapType), typeof(MapType), typeof(Map), MapType.Road, BindingMode.OneWay);
+
+        /// <summary>
+        /// Description of property
+        /// </summary>
+        public MapType MapType
+        {
+            get
+            {
+                return (MapType)GetValue(MapTypeProperty);
+            }
+
+            set
+            {
+                SetValue(MapTypeProperty, value);
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Indica si el mapa se cargo o no
         /// </summary>
         public bool HasBeenLoaded { get; internal set; }
+
+        /// <summary>
+        /// Permite detectar los errores en el plugin [Solo para log]
+        /// </summary>
+        public static event EventHandler<Exception> ErrorHandler;
 
         /// <summary>
         /// Realiza una instsancia del mapa
@@ -124,14 +166,39 @@ namespace Plugin.BingMap
         /// <param name="e"></param>
         private void Pins_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            RemoveAllPins();
-            foreach (var item in Pins)
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
             {
-                if (item is Pin pin)
-                {
-                    AddPin(pin);
-                }
+                RemoveAllPins();
+                return;
             }
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move) return;
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace) return;
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                foreach (var item in e.OldItems)
+                    if (item is Pin pin)
+                        RemovePin(pin.GetHashCode());
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                foreach (var item in e.NewItems)
+                    if (item is Pin pin)
+                        AddPin(pin);
+        }
+
+        /// <summary>
+        /// Permite ejecutar un evento de error
+        /// </summary>
+        /// <param name="ex"></param>
+        internal static void OnErrorHandler(object sender, Exception ex)
+        {
+            ErrorHandler?.Invoke(sender, ex);
+        }
+
+        private void RemovePin(int hashcode)
+        {
+            Action = Action.RemovePin;
+            ReceiveAction?.Invoke(this, hashcode);
         }
 
         /// <summary>
@@ -156,7 +223,7 @@ namespace Plugin.BingMap
         /// <summary>
         /// Esta variable almacena la action actual o la ultima accion lanzada por la vista
         /// </summary>
-        internal Action Action { get; private set; }
+        internal Action Action { get; set; }
 
         /// <summary>
         /// Se ejecuta al cargar el mapa
@@ -178,6 +245,30 @@ namespace Plugin.BingMap
         /// Define el estilo del mapa
         /// </summary>
         public new MapStyle Style { get; set; }
+
+
+        #region BindableProperty MaxBounds
+        /// <summary>
+        /// Description of property
+        /// </summary>
+        public static readonly BindableProperty MaxBoundsProperty = BindableProperty.Create(nameof(MaxBounds), typeof(IEnumerable<Location>), typeof(Map), default(IEnumerable<Location>), BindingMode.OneWay);
+
+        /// <summary>
+        /// Description of property
+        /// </summary>
+        public IEnumerable<Location> MaxBounds
+        {
+            get
+            {
+                return (IEnumerable<Location>)GetValue(MaxBoundsProperty);
+            }
+
+            set
+            {
+                SetValue(MaxBoundsProperty, value);
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Permite enviar objetos
@@ -204,6 +295,45 @@ namespace Plugin.BingMap
         internal void OnViewChange(string ev, double lat, double lng)
         {
             ViewChanged?.Invoke(this, new ViewChanged(ResolveEvent(ev), new Location(lat, lng)));
+        }
+
+        internal static string ResolveMaxBounds(IEnumerable<Location> maxbounds)
+        {
+            if (maxbounds == null) return string.Empty;
+            if (maxbounds.Count() < 4) return string.Empty;
+            var strlist = new List<string>();
+            foreach (var bound in maxbounds)
+                strlist.Add($"new Microsoft.Maps.Location({bound.Latitude}, {bound.Longitude})");
+            var array = string.Join(",", strlist);
+            return $"maxBounds: Microsoft.Maps.LocationRect.fromLocations({array}),";
+        }
+
+        /// <summary>
+        /// Resuelve el tipo de mapa a mostrar
+        /// </summary>
+        /// <param name="maptype"></param>
+        /// <returns></returns>
+        internal static string ResolveMapType(MapType maptype)
+        {
+            switch (maptype)
+            {
+                case MapType.Road:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.road,";
+                case MapType.StreetSide:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.streetside,";
+                case MapType.Aerial:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.aerial,";
+                case MapType.BirdsEye:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.birdseye,";
+                case MapType.CanvasDark:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.canvasdark,";
+                case MapType.CanvasLight:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.canvaslight,";
+                case MapType.Grayscale:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.grayscale,";
+                default:
+                    return "mapTypeId: Microsoft.Maps.MapTypeId.road,";
+            }
         }
 
         /// <summary>

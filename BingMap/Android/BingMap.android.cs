@@ -64,6 +64,7 @@ namespace Plugin.BingMap
             }
             catch(Exception ex)
             {
+                Map.OnErrorHandler(this, ex);
                 System.Diagnostics.Debug.WriteLine(ex);
             }
             return null;
@@ -98,6 +99,7 @@ namespace Plugin.BingMap
             }
             catch (Exception ex)
             {
+                Map.OnErrorHandler(this, ex);
                 System.Diagnostics.Debug.WriteLine(ex);
             }
             return null;
@@ -143,6 +145,7 @@ namespace Plugin.BingMap
             }
             catch (Exception ex)
             {
+                Map.OnErrorHandler(this, ex);
                 System.Diagnostics.Debug.WriteLine(ex);
             }
             return null;

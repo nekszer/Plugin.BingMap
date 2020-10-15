@@ -7,37 +7,42 @@ namespace Plugin.BingMap
 {
     public class JSBridge : Java.Lang.Object
     {
-        readonly WeakReference<BingMapAndroid> _bingmap;
+        readonly BingMapAndroid Bingmap;
 
         public JSBridge(BingMapAndroid hybridRenderer)
         {
-            _bingmap = new WeakReference<BingMapAndroid>(hybridRenderer);
+            Bingmap = hybridRenderer;
         }
 
         [JavascriptInterface]
         [Export("polylineClick")]
         public void PolylineClick(string hashcode)
         {
-            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
-                return;
             try
             {
-                bingmap.Post(() =>
+                Bingmap.Post(() =>
                 {
-                    if (int.TryParse(hashcode, out int hash))
+                    try
                     {
-                        var polylineitem = bingmap.Element.Polylines.FirstOrDefault(e => e.GetHashCode() == hash);
-                        if (polylineitem != null)
+                        if (int.TryParse(hashcode, out int hash))
                         {
-                            System.Diagnostics.Debug.WriteLine("PolylineClick", "BingMap");
-                            polylineitem.OnClick();
+                            var polylineitem = Bingmap.Element.Polylines.FirstOrDefault(e => e.GetHashCode() == hash);
+                            if (polylineitem != null)
+                            {
+                                System.Diagnostics.Debug.WriteLine("PolylineClick", "BingMap");
+                                polylineitem.OnClick();
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Map.OnErrorHandler(this, ex);
                     }
                 });
             }
             catch(Exception ex)
             {
-
+                Map.OnErrorHandler(this, ex);
             }
         }
 
@@ -45,18 +50,23 @@ namespace Plugin.BingMap
         [Export("onViewChange")]
         public void OnViewChange(string e, string lat, string lng)
         {
-            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
-                return;
             try
             {
-                bingmap.Post(() =>
+                Bingmap.Post(() =>
                 {
-                    bingmap.Element.OnViewChange(e, double.Parse(lat), double.Parse(lng));
+                    try
+                    {
+                        Bingmap.Element.OnViewChange(e, double.Parse(lat), double.Parse(lng));
+                    }
+                    catch (Exception ex)
+                    {
+                        Map.OnErrorHandler(this, ex);
+                    }
                 });
             }
             catch (Exception ex)
             {
-
+                Map.OnErrorHandler(this, ex);
             }
         }
 
@@ -64,17 +74,23 @@ namespace Plugin.BingMap
         [Export("onMapClick")]
         public void OnMapClick(string lat, string lng)
         {
-            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
-                return;
             try
             {
-                bingmap.Post(() =>
+                Bingmap.Post(() =>
                 {
-                    bingmap.Element.OnMapClicked(double.Parse(lat), double.Parse(lng));
+                    try
+                    {
+                        Bingmap.Element.OnMapClicked(double.Parse(lat), double.Parse(lng));
+                    }
+                    catch (Exception ex)
+                    {
+                        Map.OnErrorHandler(this, ex);
+                    }
                 });
             }
             catch(Exception ex)
             {
+                Map.OnErrorHandler(this, ex);
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
@@ -83,22 +99,28 @@ namespace Plugin.BingMap
         [Export("pinClick")]
         public void PinClick(string str)
         {
-            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
-                return;
             try
             {
-                bingmap.Post(() =>
+                Bingmap.Post(() =>
                 {
-                    var pininlist = bingmap.Element.Pins.FirstOrDefault(e => e.GetHashCode() == int.Parse(str));
-                    if (pininlist != null)
+                    try
                     {
-                        System.Diagnostics.Debug.WriteLine("PinClick", "BingMap");
-                        pininlist.OnClick();
+                        var pininlist = Bingmap.Element.Pins.FirstOrDefault(e => e.GetHashCode() == int.Parse(str));
+                        if (pininlist != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("PinClick", "BingMap");
+                            pininlist.OnClick();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Map.OnErrorHandler(this, ex);
                     }
                 });
             }
             catch(Exception ex)
             {
+                Map.OnErrorHandler(this, ex);
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
@@ -108,17 +130,23 @@ namespace Plugin.BingMap
         public void OnLoadComplete(string str)
         {
             System.Diagnostics.Debug.WriteLine("OnLoadComplete", "BingMap");
-            if (_bingmap == null || !_bingmap.TryGetTarget(out BingMapAndroid bingmap))
-                return;
             try
             {
-                bingmap.Post(() =>
+                Bingmap.Post(() =>
                 {
-                    bingmap.Element.OnLoadComplete(str);
+                    try
+                    {
+                        Bingmap.Element.OnLoadComplete(str);
+                    }
+                    catch (Exception ex)
+                    {
+                        Map.OnErrorHandler(this, ex);
+                    }
                 });
             }
             catch (Exception ex)
             {
+                Map.OnErrorHandler(this, ex);
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }

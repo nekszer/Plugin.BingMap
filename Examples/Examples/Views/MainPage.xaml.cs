@@ -8,5 +8,10 @@ namespace Examples.Views
         {
             InitializeComponent();
         }
+
+        private void Map_ErrorHandler(object sender, System.Exception e)
+        {
+
+        }
     }
 }

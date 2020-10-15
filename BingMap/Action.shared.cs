@@ -8,6 +8,7 @@
         Polyline,
         RemoveAllPolylines,
         ZoomForLocations,
-        Reload
+        Reload,
+        RemovePin
     }
 }

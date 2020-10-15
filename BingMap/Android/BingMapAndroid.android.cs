@@ -4,6 +4,7 @@ using Android.Runtime;
 using Android.Webkit;
 using Newtonsoft.Json;
 using Plugin.BingMap;
+using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android.AppCompat;
@@ -20,30 +21,37 @@ namespace Plugin.BingMap
             _context = context;
         }
 
+        public Android.Webkit.WebView Instance { get; set; }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
         {
             base.OnElementChanged(e);
 
             if (Control == null)
             {
-                var webView = new Android.Webkit.WebView(_context)
+                Instance = new Android.Webkit.WebView(_context)
                 {
                     LayoutParameters = new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent)
                 };
-                webView.Settings.SetGeolocationEnabled(true);
-                webView.Settings.AllowContentAccess = true;
-                webView.Settings.JavaScriptEnabled = true;
-                webView.Settings.CacheMode = CacheModes.CacheElseNetwork;
-                webView.Settings.SetAppCacheEnabled(true);
-                webView.Settings.SetRenderPriority(WebSettings.RenderPriority.High);
-                SetNativeControl(webView);
+                Instance.Settings.SetGeolocationEnabled(true);
+                Instance.Settings.AllowContentAccess = true;
+                Instance.Settings.JavaScriptEnabled = true;
+                Instance.Settings.CacheMode = CacheModes.CacheElseNetwork;
+                Instance.Settings.SetAppCacheEnabled(true);
+                Instance.Settings.SetRenderPriority(WebSettings.RenderPriority.High);
+                SetNativeControl(Instance);
             }
 
             if (e.NewElement != null)
             {
-                var html = GetHtml(e.NewElement.ApiKey, e.NewElement.Theme, e.NewElement.Style);
-                Control.AddJavascriptInterface(new JSBridge(this), "jsBridge");
-                Control.LoadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
+                var html = GetHtml(e.NewElement.ApiKey, e.NewElement.Theme, e.NewElement.Style, e.NewElement.MaxBounds, e.NewElement.MapType);
+                Instance.AddJavascriptInterface(new JSBridge(this), "jsBridge");
+                Instance.LoadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
             }
 
             if (Element != null)
@@ -52,7 +60,7 @@ namespace Plugin.BingMap
 
         private void Element_Send(object sender, object e)
         {
-            if (Control == null)
+            if (Instance == null)
                 return;
 
             if (!(sender is Map view))
@@ -63,7 +71,7 @@ namespace Plugin.BingMap
                 case Plugin.BingMap.Action.SetCenter:
                     if (e is Center center)
                     {
-                        Control.EvaluateJavascript($"setCenter({center.Latitude},{center.Longitude},{center.Zoom})", null);
+                        Instance.EvaluateJavascript($"setCenter({center.Latitude},{center.Longitude},{center.Zoom})", null);
                     }
                     break;
 
@@ -72,11 +80,11 @@ namespace Plugin.BingMap
                     {
                         if (pin.Image != null)
                         {
-                            Control.EvaluateJavascript($"addPinImage({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}', '{pin.Image.Source}', {pin.Image.X}, {pin.Image.Y})", null);
+                            Instance.EvaluateJavascript($"addPinImage({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}', '{pin.Image.Source}', {pin.Image.X}, {pin.Image.Y})", null);
                         }
                         else
                         {
-                            Control.EvaluateJavascript($"addPin({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}')", null);
+                            Instance.EvaluateJavascript($"addPin({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}')", null);
                         }
                     }
                     break;
@@ -84,21 +92,28 @@ namespace Plugin.BingMap
                 case Plugin.BingMap.Action.RemoveAllPins:
                     if (e is null)
                     {
-                        Control.EvaluateJavascript("removeAllPins()", null);
+                        Instance.EvaluateJavascript("removeAllPins()", null);
                     }
                     break;
 
                 case Plugin.BingMap.Action.Polyline:
                     if (e is Polyline polyline)
                     {
-                        Control.EvaluateJavascript($"addPolyline({JsonConvert.SerializeObject(polyline)}, {polyline.GetHashCode()})", null);
+                        Instance.EvaluateJavascript($"addPolyline({JsonConvert.SerializeObject(polyline)}, {polyline.GetHashCode()})", null);
                     }
                     break;
 
                 case Plugin.BingMap.Action.RemoveAllPolylines:
                     if (e is null)
                     {
-                        Control.EvaluateJavascript($"removeAllPolylines()", null);
+                        Instance.EvaluateJavascript($"removeAllPolylines()", null);
+                    }
+                    break;
+
+                case Plugin.BingMap.Action.RemovePin:
+                    if(e is int hashcode)
+                    {
+                        Instance.EvaluateJavascript($"removePin("+ hashcode + ")", null);
                     }
                     break;
 
@@ -106,14 +121,14 @@ namespace Plugin.BingMap
                     if (e is IEnumerable<Location> locations)
                     {
                         var json = JsonConvert.SerializeObject(locations);
-                        Control.EvaluateJavascript($"zoomForLocations({json})", null);
+                        Instance.EvaluateJavascript($"zoomForLocations({json})", null);
                     }
                     break;
 
                 case Action.Reload:
                     if (e is null)
                     {
-                        Control.Reload();
+                        Instance.Reload();
                     }
                     break;
 
@@ -122,7 +137,7 @@ namespace Plugin.BingMap
             }
         }
 
-        private string GetHtml(string apikey, MapTheme theme, MapStyle style)
+        private string GetHtml(string apikey, MapTheme theme, MapStyle style, IEnumerable<Location> maxbounds, MapType type = MapType.Road)
         {
             return @"<!DOCTYPE html>
                     <html>
@@ -155,11 +170,13 @@ namespace Plugin.BingMap
 
                             function loadMapScenario() {
                                 // iniciamos el mapa
-                                map = new Microsoft.Maps.Map(document.getElementById('bingv8map'), {
+                                map = new Microsoft.Maps.Map(document.getElementById('bingv8map'), { " + 
+                                    Map.ResolveMapType(type) + @"
                                     showBreadcrumb: false,
                                     showLocateMeButton: false,
                                     showMapTypeSelector: false,
-                                    showZoomButtons: false,
+                                    showZoomButtons: false," + 
+                                    Map.ResolveMaxBounds(maxbounds) + @"
                                     liteMode: true" +
                                     Map.ResolveTheme(theme, style)
                                 + @"});
@@ -236,18 +253,7 @@ namespace Plugin.BingMap
                                     title: title
                                 });
 
-                                pushpin.metadata = {
-                                    HashCode: hashcode,
-                                    Latitude: lat,
-                                    Longitude: lon,
-                                    Title: title,
-                                    Data: data,
-                                    Image: {
-                                        Source: '',
-                                        X: 0,
-                                        Y: 0
-                                    }
-                                };
+                                pushpin.metadata = hashcode;
 
                                 map.entities.push(pushpin);
 
@@ -256,6 +262,18 @@ namespace Plugin.BingMap
                                 Microsoft.Maps.Events.addHandler(pushpin, 'click', function (pin) {
                                     invokePinClick(JSON.stringify(pin.target.metadata));
                                 });
+                            }
+
+                            function removePin(hash){
+                                for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+                                    var pushpin = map.entities.get(i);
+                                    if (pushpin instanceof Microsoft.Maps.Pushpin) {
+                                        if(pushpin.metadata == hash){
+                                            map.entities.removeAt(i);
+                                            break;
+                                        }
+                                    }
+                                }
                             }
 
                             function removeAllPins() {

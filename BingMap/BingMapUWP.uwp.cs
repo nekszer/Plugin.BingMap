@@ -178,7 +178,7 @@ namespace Plugin.BingMap
             }
             catch (Exception ex)
             {
-
+                Map.OnErrorHandler(this, ex);
             }
             return null;
         }
@@ -193,7 +193,7 @@ namespace Plugin.BingMap
             }
             catch (Exception ex)
             {
-
+                Map.OnErrorHandler(this, ex);
             }
             return null;
         }
