@@ -47,6 +47,38 @@ namespace Plugin.BingMap
         }
 
         [JavascriptInterface]
+        [Export("polygonClick")]
+        public void PolygonClick(string hashcode)
+        {
+            try
+            {
+                Bingmap.Post(() =>
+                {
+                    try
+                    {
+                        if (int.TryParse(hashcode, out int hash))
+                        {
+                            var polygonitem = Bingmap.Element.Polygons.FirstOrDefault(e => e.GetHashCode() == hash);
+                            if (polygonitem != null)
+                            {
+                                System.Diagnostics.Debug.WriteLine("PolygonClick", "BingMap");
+                                polygonitem.OnClick();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Map.OnErrorHandler(this, ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Map.OnErrorHandler(this, ex);
+            }
+        }
+
+        [JavascriptInterface]
         [Export("onViewChange")]
         public void OnViewChange(string e, string lat, string lng)
         {

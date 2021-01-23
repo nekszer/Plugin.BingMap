@@ -7,11 +7,11 @@
              xmlns:ViewModels="clr-namespace:Examples.ViewModels">
 
     <ContentPage.BindingContext>
-        <ViewModels:MainViewModel />
+        <ViewModels:MainViewModel Map="{x:Reference Map}" />
     </ContentPage.BindingContext>
     
     <Grid>
-        <BingMap:Map ApiKey="AiaCvUwc1w8NPFNP3njRj6x28yQUDDj-I_l9K87f3rEj9d30JT_vyvGOF_wOP1zx" Theme="Dark" MaxBounds="{Binding MaxBounds}" />
+        <BingMap:Map x:Name="Map" ApiKey="AiaCvUwc1w8NPFNP3njRj6x28yQUDDj-I_l9K87f3rEj9d30JT_vyvGOF_wOP1zx" Theme="Dark" />
     </Grid>
 
 </ContentPage>

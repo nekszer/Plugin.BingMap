@@ -9,6 +9,8 @@
         RemoveAllPolylines,
         ZoomForLocations,
         Reload,
-        RemovePin
+        RemovePin,
+        Polygon,
+        RemoveAllPolygons
     }
 }

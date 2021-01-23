@@ -1,4 +1,5 @@
 ﻿using Plugin.BingMap;
+using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 
@@ -6,6 +7,33 @@ namespace Examples.ViewModels
 {
     public class MainViewModel : BindableObject
     {
+
+        #region Notified Property Map
+        /// <summary>
+        /// Map
+        /// </summary>
+        private Map map;
+        public Map Map
+        {
+            get { return map; }
+            set { map = value; OnPropertyChanged(); SetMap(); }
+        }
+
+        private void SetMap()
+        {
+            if (Map == null) return;
+            Map.LoadComplete += Map_LoadComplete;
+        }
+
+        private void Map_LoadComplete(object sender, EventArgs e)
+        {
+            Polygon polygon = new Polygon
+            {
+                Locations = MaxBounds
+            };
+            Map.Polygons.Add(polygon);
+        }
+        #endregion
 
         #region Notified Property MaxBounds
         /// <summary>

@@ -28,6 +28,9 @@ namespace Plugin.BingMap
         const string OnPolylineClick = "function invokePolylineClick(hashcode) { window.webkit.messageHandlers.OnPolylineClick.postMessage(hashcode); }";
         const string OnPolylineClickMethod = "OnPolylineClick";
 
+        const string OnPolygonClick = "function invokePolygonClick(hashcode) { window.webkit.messageHandlers.OnPolygonClick.postMessage(hashcode); }";
+        const string OnPolygonClickMethod = "OnPolygonClick";
+
         WKUserContentController userController;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Map> e)
@@ -57,6 +60,10 @@ namespace Plugin.BingMap
                 script = new WKUserScript(new NSString(OnPolylineClick), WKUserScriptInjectionTime.AtDocumentEnd, false);
                 userController.AddUserScript(script);
                 userController.AddScriptMessageHandler(this, OnPolylineClickMethod);
+
+                script = new WKUserScript(new NSString(OnPolygonClick), WKUserScriptInjectionTime.AtDocumentEnd, false);
+                userController.AddUserScript(script);
+                userController.AddScriptMessageHandler(this, OnPolygonClickMethod);
 
                 var config = new WKWebViewConfiguration { UserContentController = userController };
                 var webView = new WKWebView(Frame, config);
@@ -250,6 +257,30 @@ namespace Plugin.BingMap
                                     }
                                 }
                             }
+
+                            function addPolygon(polygon, hashcode){
+                                var polylinelocations = polygon.Locations;
+                                var maplocations = [];
+                                for (let index = 0; index < polylinelocations.length; index++) {
+                                    const location = polylinelocations[index];
+                                    maplocations.push(new Microsoft.Maps.Location(location.Latitude, location.Longitude));
+                                }
+                                var polygon = new Microsoft.Maps.Polygon(maplocations, polygon.Style);
+                                polygon.metadata = hashcode;
+                                Microsoft.Maps.Events.addHandler(polygon, 'click', function (args) {
+                                    invokePolygonClick(args.target.metadata);
+                                });
+                                map.entities.push(polygon);
+                            }
+
+                            function removeAllPolygons(){
+                                for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+                                    var polygon = map.entities.get(i);
+                                    if (polygon instanceof Microsoft.Maps.Polygon) {
+                                        map.entities.removeAt(i);
+                                    }
+                                }
+                            }
                         </script>
                     </head>
                     <body onload='loadMapScenario();'>
@@ -285,6 +316,20 @@ namespace Plugin.BingMap
                                 {
                                     await Control.EvaluateJavaScriptAsync($"addPin({pin.GetHashCode()}, {pin.Latitude}, {pin.Longitude}, '{pin.Title}', '{pin.Data}')");
                                 }
+                            }
+                            break;
+
+                        case Action.Polygon:
+                            if (e is Polygon polygon)
+                            {
+                                await Control.EvaluateJavaScriptAsync($"addPolygon({JsonConvert.SerializeObject(polygon)}, {polygon.GetHashCode()})");
+                            }
+                            break;
+
+                        case Action.RemoveAllPolygons:
+                            if (e is null)
+                            {
+                                await Control.EvaluateJavaScriptAsync($"removeAllPolygons()");
                             }
                             break;
 
@@ -368,6 +413,14 @@ namespace Plugin.BingMap
                     if (!string.IsNullOrEmpty(result))
                     {
                         var polylinefound = Element.Polylines.FirstOrDefault(p => p.GetHashCode() == int.Parse(result));
+                        polylinefound?.OnClick();
+                    }
+                    break;
+
+                case OnPolygonClickMethod:
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        var polylinefound = Element.Polygons.FirstOrDefault(p => p.GetHashCode() == int.Parse(result));
                         polylinefound?.OnClick();
                     }
                     break;

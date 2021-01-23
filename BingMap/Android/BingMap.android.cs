@@ -138,7 +138,7 @@ namespace Plugin.BingMap
                     var coordinates = resource.Point?.Coordinates;
                     if (coordinates == null) continue;
                     var lat = coordinates[0];
-                    var lng = coordinates[0];
+                    var lng = coordinates[1];
                     locations.Add(new AddressLocation(resource.Name, new Location(lat, lng)));
                 }
                 return locations;

@@ -32,6 +32,11 @@ namespace Plugin.BingMap
         public ObservableCollection<Polyline> Polylines { get; set; }
 
         /// <summary>
+        /// Poligonos
+        /// </summary>
+        public ObservableCollection<Polygon> Polygons { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public MapTheme Theme { get; set; }
@@ -78,6 +83,28 @@ namespace Plugin.BingMap
             Pins.CollectionChanged += Pins_CollectionChanged;
             if (Polylines == null) Polylines = new ObservableCollection<Polyline>();
             Polylines.CollectionChanged += Polylines_CollectionChanged;
+            if (Polygons == null) Polygons = new ObservableCollection<Polygon>();
+            Polygons.CollectionChanged += Polygons_CollectionChanged;
+        }
+
+        private void Polygons_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RemoveAllPolygons();
+            foreach (var item in Polygons)
+                if (item is Polygon polygon)
+                    AddPolyline(polygon);
+        }
+
+        public void AddPolyline(Polygon polygon)
+        {
+            Action = Action.Polygon;
+            ReceiveAction?.Invoke(this, polygon);
+        }
+
+        private void RemoveAllPolygons()
+        {
+            Action = Action.RemoveAllPolygons;
+            ReceiveAction?.Invoke(this, null);
         }
 
         private void Polylines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

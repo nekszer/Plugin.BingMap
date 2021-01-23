@@ -103,6 +103,20 @@ namespace Plugin.BingMap
                     }
                     break;
 
+                case Action.Polygon:
+                    if (e is Polygon polygon)
+                    {
+                        Instance.EvaluateJavascript($"addPolygon({JsonConvert.SerializeObject(polygon)}, {polygon.GetHashCode()})", null);
+                    }
+                    break;
+
+                case Action.RemoveAllPolygons:
+                    if (e is null)
+                    {
+                        Instance.EvaluateJavascript($"removeAllPolygons()", null);
+                    }
+                    break;
+
                 case Plugin.BingMap.Action.RemoveAllPolylines:
                     if (e is null)
                     {
@@ -167,6 +181,8 @@ namespace Plugin.BingMap
                             function onViewChange(event, lat, lng) { jsBridge.onViewChange(event, lat, lng); }
 
                             function invokePolylineClick(hashcode) { jsBridge.polylineClick(hashcode); }
+
+                            function invokePolygonClick(hashcode) { jsBridge.polygonClick(hashcode); }
 
                             function loadMapScenario() {
                                 // iniciamos el mapa
@@ -317,6 +333,30 @@ namespace Plugin.BingMap
                                 for (var i = map.entities.getLength() - 1; i >= 0; i--) {
                                     var polyline = map.entities.get(i);
                                     if (polyline instanceof Microsoft.Maps.Polyline) {
+                                        map.entities.removeAt(i);
+                                    }
+                                }
+                            }
+
+                            function addPolygon(polygon, hashcode){
+                                var polylinelocations = polygon.Locations;
+                                var maplocations = [];
+                                for (let index = 0; index < polylinelocations.length; index++) {
+                                    const location = polylinelocations[index];
+                                    maplocations.push(new Microsoft.Maps.Location(location.Latitude, location.Longitude));
+                                }
+                                var polygon = new Microsoft.Maps.Polygon(maplocations, polygon.Style);
+                                polygon.metadata = hashcode;
+                                Microsoft.Maps.Events.addHandler(polygon, 'click', function (args) {
+                                    invokePolygonClick(args.target.metadata);
+                                });
+                                map.entities.push(polygon);
+                            }
+
+                            function removeAllPolygons(){
+                                for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+                                    var polygon = map.entities.get(i);
+                                    if (polygon instanceof Microsoft.Maps.Polygon) {
                                         map.entities.removeAt(i);
                                     }
                                 }
