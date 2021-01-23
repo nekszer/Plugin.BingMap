@@ -14,10 +14,10 @@
     <PackageId>Plugin.BingMap</PackageId>
 
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
-    <AssemblyVersion>1.4.8.0</AssemblyVersion>
-    <AssemblyFileVersion>1.4.8.0</AssemblyFileVersion>
-    <Version>1.4.8</Version>
-    <PackageVersion>1.4.8.0</PackageVersion>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.5.0.0</AssemblyFileVersion>
+    <Version>1.5.0</Version>
+    <PackageVersion>1.5.0.0</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>default</LangVersion>
@@ -49,14 +49,14 @@
       • Calculate Route
 
       Nota:
-      Este plugin solo funciona en Android por el momento, falta la implementacion de iOS, ademas este paquete sigue en desarrollo y podria tener errores.
+      Este plugin sigue en desarrollo y podria tener errores.
 
       Uso:
       xmlns:BingMap="clr-namespace:Plugin.BingMap;assembly=Plugin.BingMap"
 
       &lt;BingMap:Map ApiKey="YourApiKeyOfBingMaps" /&gt;
 
-      descripcion sin acentos
+      [descripcion sin acentos]
     </Description>
 
 
@@ -66,7 +66,7 @@
 
     <!--When built in 2019 will remove extra references on pack-->
     <DisableExtraReferences>true</DisableExtraReferences>
-    <FileVersion>1.4.2.0</FileVersion>
+    <FileVersion>1.5.0.0</FileVersion>
     <PackageIcon>bingmap.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
 
