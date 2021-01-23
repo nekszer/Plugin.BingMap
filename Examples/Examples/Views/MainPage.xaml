@@ -3,15 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Examples.Views.MainPage"
              xmlns:BingMap="clr-namespace:Plugin.BingMap;assembly=Plugin.BingMap"
-             Title="Simple Map"
-             xmlns:ViewModels="clr-namespace:Examples.ViewModels">
+             Title="Simple Map">
 
-    <ContentPage.BindingContext>
-        <ViewModels:MainViewModel Map="{x:Reference Map}" />
-    </ContentPage.BindingContext>
-    
     <Grid>
-        <BingMap:Map x:Name="Map" ApiKey="AiaCvUwc1w8NPFNP3njRj6x28yQUDDj-I_l9K87f3rEj9d30JT_vyvGOF_wOP1zx" Theme="Dark" />
+        <BingMap:Map ApiKey="YourApiKey" Theme="Dark" />
     </Grid>
 
 </ContentPage>

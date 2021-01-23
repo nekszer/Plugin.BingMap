@@ -18,4 +18,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BingMap\BingMap.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
 </Project>
